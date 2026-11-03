@@ -1,0 +1,6 @@
+description = "Install and self-test the Motion Reel Kit"
+prompt = """
+Run ./setup.sh from the repository root. If it stops because something is missing, install it the way the message says
+(Homebrew/apt) when you can do so without the user's password, then run ./setup.sh again until it prints READY.
+If it needs the user (password, Homebrew install, Windows → WSL), tell them the exact command to run. Then summarise what is installed.
+"""

@@ -1,0 +1,25 @@
+# installed by setup.sh
+node_modules/
+.venv/
+.models/
+__pycache__/
+# renders, review stills
+out/
+# generated per reel by the pipeline (timing.py / sfx.py); only the end-card assets are source
+remotion/public/mg/*
+!remotion/public/mg/cta/
+remotion/public/mg/cta/last-*.jpg
+# your own reels (keep the examples and the template)
+reels/*
+!reels/example-*/
+reels/*/cues.txt
+reels/*/transcript.txt
+remotion/src/reels/*
+!remotion/src/reels/Template.tsx
+.DS_Store
+# secrets — never commit
+.env
+.env.*
+*.pem
+*-key.json
+key.json

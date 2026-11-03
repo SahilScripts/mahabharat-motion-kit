@@ -1,0 +1,33 @@
+# Sound events for the example reel r8 (seconds from the start of each shot; see cues.txt).
+from sfxlib import *  # noqa: F401,F403
+
+EVENTS = {
+    0: [(0.0, lambda: noise_bp(5.9, 400, 0.5, 0.16, 0.8, 1.2)), (2.35, lambda: rumble(2.2, 0.6, fc=44)), (2.4, lambda: drum(60, 34, 0.9, 0.7)),
+        (4.55, lambda: sweep(320, 760, 0.55, 0.22, 0.05, 0.3, curve=0.8)), (4.62, lambda: sweep(340, 820, 0.45, 0.14, 0.05, 0.3, curve=0.8))],
+    1: [(1.3, lambda: groan(68, 2.2, 0.45, drop=0.2)), (1.5, lambda: creak(700, 0.6, 0.35)), (2.4, lambda: creak(520, 0.5, 0.3))],
+    2: [(0.15, lambda: flip(0.5)), (0.55, lambda: bell(523, 0.25, 2.5)), *[(0.3 + i * 0.28, (lambda: tick(3200, 0.06))) for i in range(15)],
+        (4.7, lambda: sweep(200, 600, 0.8, 0.15, 0.3, 0.3)), (5.38, lambda: bell(392, 0.35, 2.5)), (6.3, lambda: bell(523, 0.3, 2.0)),
+        (6.84, lambda: bell(659, 0.3, 2.0)), (7.8, lambda: bell(784, 0.3, 2.0)), (9.0, lambda: bell(1047, 0.28, 2.5)), (9.02, lambda: bell(1568, 0.12, 2.0))],
+    3: [(1.6, lambda: rumble(1.4, 0.5, fc=40)), (2.75, lambda: drum(1500, 300, 0.2, 1.2, click=1.0)), (2.78, lambda: noise_bp(1.2, 1800, 1.2, 0.6, 0.005, 1.0)),
+        (2.8, lambda: drum(52, 28, 1.2, 1.1)), (2.82, lambda: rumble(2.0, 0.9, fc=42)),
+        (3.95, lambda: bell(659, 0.3, 1.6)), (4.9, lambda: bell(784, 0.3, 1.6)), (5.95, lambda: bell(988, 0.3, 1.6)), (7.55, lambda: bell(1319, 0.28, 1.8))],
+    4: [(1.6, lambda: sweep(300, 900, 1.0, 0.15, 0.2, 0.3)), (2.6, lambda: tick(2000, 0.3)), (3.4, lambda: sweep(300, 900, 1.0, 0.15, 0.2, 0.3)), (4.5, lambda: tick(2000, 0.3))],
+    5: [*[(0.9 + i * 0.05, (lambda f: (lambda: tick(f, 0.12)))(2400 + i * 100)) for i in range(10)], (2.2, lambda: sweep(900, 120, 0.7, 0.3, 0.05, 0.2)),
+        (2.88, lambda: drum(70, 40, 0.5, 0.8)), (4.28, lambda: drum(1500, 300, 0.2, 1.3, click=1.0)), (4.3, lambda: drum(50, 26, 1.3, 1.2)),
+        (4.32, lambda: rumble(1.8, 0.9, fc=40)), (4.35, lambda: bell(196, 0.3, 3.0))],
+    6: [(0.8, lambda: creak(900, 0.5, 0.3)), (0.85, lambda: sweep(90, 160, 1.8, 0.2, 0.3, 0.5, curve=1.0)), (2.6, lambda: drum(1200, 400, 0.08, 0.5, click=1.0)),
+        (3.7, lambda: sweep(120, 500, 2.2, 0.25, 0.6, 0.6)), *[(4.0 + i * 0.12, (lambda: tick(1500, 0.1))) for i in range(16)]],
+    7: [(0.4, lambda: rumble(1.1, 0.5, fc=40)), (1.45, lambda: drum(1500, 300, 0.2, 1.3, click=1.0)), (1.47, lambda: drum(48, 26, 1.3, 1.3)),
+        (1.5, lambda: rumble(2.0, 1.0, fc=40)), (1.55, lambda: noise_bp(1.2, 700, 0.9, 0.6, 0.01, 1.0))],
+    8: [(1.2, lambda: noise_bp(2.9, 1100, 1.0, 0.45, 0.6, 1.2)), (1.25, lambda: sweep(200, 900, 2.8, 0.15, 0.6, 1.0)),
+        (5.4, lambda: noise_bp(2.3, 1500, 1.2, 0.5, 0.3, 1.0)), (5.45, lambda: sweep(300, 1400, 2.2, 0.18, 0.3, 0.8))],
+    9: [(0.0, lambda: noise_bp(2.6, 900, 0.7, 0.35, 0.1, 0.8)), (0.98, lambda: drum(1500, 250, 0.25, 1.3, click=1.0)), (1.0, lambda: drum(45, 24, 1.0, 1.2)),
+        (1.74, lambda: drum(1500, 250, 0.25, 1.3, click=1.0)), (1.76, lambda: drum(45, 24, 1.0, 1.2)), (1.8, lambda: rumble(1.0, 0.7, fc=40))],
+    10: [(1.5, lambda: sweep(60, 240, 3.4, 0.3, 0.8, 0.8, curve=1.2)), (1.6, lambda: noise_bp(3.3, 300, 0.6, 0.35, 0.6, 1.0)),
+         (3.25, lambda: drum(50, 26, 1.3, 1.1)), (3.3, lambda: rumble(1.8, 1.0, fc=40))],
+    11: [(0.0, lambda: noise_bp(2.2, 500, 0.6, 0.06, 0.4, 0.8)), *[(0.9 + i * 0.11, (lambda f: (lambda: tick(f, 0.12)))(1800 + i * 110)) for i in range(9)],
+         (1.2, lambda: bell(1047, 0.18, 2.5))],
+    12: [(0.4, lambda: bell(523, 0.25, 2.0)), (0.9, lambda: bell(659, 0.25, 2.0)), (1.4, lambda: bell(784, 0.25, 2.5)),
+         (2.25, lambda: noise_bp(2.5, 900, 0.9, 0.35, 0.4, 1.4)), (5.6, lambda: drum(60, 32, 0.9, 0.9)), (5.62, lambda: rumble(1.4, 0.6, fc=44)),
+         (5.7, lambda: bell(392, 0.3, 3.0)), (6.3, lambda: bell(784, 0.25, 3.0)), (6.32, lambda: bell(1175, 0.15, 3.0))],
+}

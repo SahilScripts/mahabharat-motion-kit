@@ -1,0 +1,19 @@
+{
+ "title": "संजीवनी पर्वत कितना भारी था?",
+ "style": "Painted-realism vector characters (remotion/src/kit/real.tsx) in lit 2.5D scenes. NO subtitles, no text, no numbers, no labels; measurements shown only as lines and comparisons.",
+ "shots": [
+  {"s": 0, "title": "Hanuman lifts the mountain", "pick": "Night sky over clouds: Hanuman flies holding a whole peak overhead — trees and elephants on it.", "camera": "crane up", "sound": "wind, rumble"},
+  {"s": 1, "title": "How heavy?", "pick": "Under the floating peak, Hanuman looks up at it; it creaks and sways.", "camera": "tilt", "sound": "creak"},
+  {"s": 2, "title": "Valmiki's Ramayana", "pick": "Valmiki writes on palm leaves by a lamp; the leaf glows as the verse is chanted.", "camera": "push", "sound": "flip, chime"},
+  {"s": 3, "title": "What was on it", "pick": "Hanuman tears the peak free; cutaway: trees, elephants, gold veins and crystals light up one by one.", "camera": "push", "sound": "crack, pops"},
+  {"s": 4, "title": "Size", "pick": "The peak as a cone; a measuring line grows across its base, then up its height.", "camera": "pull back", "sound": "ticks"},
+  {"s": 5, "title": "Weight", "pick": "Wireframe cone drops onto a golden balance; the pan slams down.", "camera": "shake", "sound": "slam"},
+  {"s": 6, "title": "Crane", "pick": "The world's biggest crane lifts its record load; pull back: the mountain dwarfs it, its shape filled with countless such loads.", "camera": "pull back", "sound": "metal, swell"},
+  {"s": 7, "title": "Just the start", "pick": "Hanuman crouches and launches upward with the peak; shockwave in the clouds.", "camera": "shake", "sound": "boom"},
+  {"s": 8, "title": "Himalaya to Lanka", "pick": "A map of India: a glowing trail from the Himalaya to Lanka streaks in one go.", "camera": "track", "sound": "whoosh"},
+  {"s": 9, "title": "Twice sound", "pick": "Hanuman bursts through a vapour cone — two shock rings.", "camera": "fast", "sound": "double boom"},
+  {"s": 10, "title": "Energy", "pick": "The moving mountain blazes with energy; rings of force roll over the clouds.", "camera": "shake", "sound": "roar"},
+  {"s": 11, "title": "Even more", "pick": "Night battlefield: wounded warriors lie still; the herbs on the peak begin to glow.", "camera": "slow push", "sound": "hush, shimmer"},
+  {"s": 12, "title": "Back to the Himalaya", "pick": "Warriors rise healed; Hanuman flies the peak back and sets it on the snowy Himalaya at dawn.", "camera": "crane", "sound": "swell, bells"}
+ ]
+}
