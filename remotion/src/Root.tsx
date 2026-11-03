@@ -5,7 +5,7 @@
  *   REEL-example-asur-rakshas   example: Asur vs Rakshas (18 shots)
  *   REEL-example-sanjeevani     example: Sanjeevani, Hanuman lifts the mountain (13 shots)
  *   CTA-workflow         optional WORKFLOW end card (props: still = the reel's last frame)
- *   KIT-sheet-0/1/2/3      model sheets of the realistic cast (QA)    KIT-india-map  official India outline (QA)
+ *   KIT-sheet-0…4      model sheets of the realistic cast (QA)    KIT-india-map  official India outline (QA)
  */
 import React from "react";
 import { AbsoluteFill, Composition } from "remotion";
@@ -36,7 +36,7 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="CTA-workflow" component={CtaCard} fps={60} width={1080} height={1920}
       defaultProps={{ dur: 15.2, still: "mg/cta/ex-sanjeevani.jpg", others: ["mg/cta/ex-asur-rakshas.jpg", "mg/cta/ex-durga.jpg"], audio: true, sfx: "mg/cta/sfx.mp3" }}
       calculateMetadata={({ props }) => ({ durationInFrames: Math.ceil(props.dur * 60) })} durationInFrames={Math.ceil(15.2 * 60)} />
-    {[0, 1, 2, 3].map((p) => <Composition key={p} id={`KIT-sheet-${p}`} component={RealSheet} durationInFrames={1} fps={60} width={1080} height={1920} defaultProps={{ part: p }} />)}
+    {[0, 1, 2, 3, 4].map((p) => <Composition key={p} id={`KIT-sheet-${p}`} component={RealSheet} durationInFrames={1} fps={60} width={1080} height={1920} defaultProps={{ part: p }} />)}
     <Composition id="KIT-india-map" component={IndiaCheck} durationInFrames={1} fps={60} width={1080} height={1920} />
   </>
 );

@@ -47,8 +47,8 @@ Origin = between the feet; up is −y; about 900 px tall at scale 1 (head top �
 <RealDefs />   {/* once in every layer that contains real-cast characters */}
 <At x={540} y={1800} s={1.1}>
   <Hero look={LOOK.hanuman} o={OUT.hanuman} t={t}
-        rHand={[-180, -520]} rPose={HP.grip} rProp={<Gada />}
-        lHand={[160, -560]} lPose={HP.bless} lWrist={90}
+        rHand={[-180, -520]} rPose={HP.grip} rProp={<Gada />} rPropAngle={-70}
+        lHand={[150, -405]} lPose={HP.hang} lBend={1}
         e={{ smile: 0.4, lookX: 0.3 }} />
 </At>
 ```
@@ -59,7 +59,8 @@ Origin = between the feet; up is −y; about 900 px tall at scale 1 (head top �
 | `rHand`, `lHand` | hand targets `[x, y]`; elbows solve automatically (`rBend`/`lBend` ±1 to flip an elbow) |
 | `rPose`, `lPose` | hand shape from `HP` (below); blend two with `mixHand(a, b, k)` |
 | `rWrist`, `lWrist` | wrist rotation in degrees (−90 / 90 turns a palm to face the viewer for blessing) |
-| `rProp`, `lProp` | object held in that hand (sword, gada, lotus…); wrap in `<g transform="rotate(…)">` to angle it |
+| `rProp`, `lProp` | object held in that hand (sword, gada, lotus, bow…) — ALWAYS give it a screen angle with `rPropAngle`/`lPropAngle` |
+| `rPropAngle`, `lPropAngle` | screen angle in degrees the held prop's shaft points to, whatever the arm does: −90 straight up, −45 up-right, 0 right, 90 down |
 | `e` | expression `{anger, smile, open, lookX, lookY, blink, fear}` (0..1, look −1..1) |
 | `bulk` | body width (1.15 = heavier, demons/warriors) · `stance` leg spread · `lean` degrees · `headTilt` degrees |
 | `glow`, `aura` | divine glow strength and colour behind the figure |
@@ -69,9 +70,33 @@ Origin = between the feet; up is −y; about 900 px tall at scale 1 (head top �
 Typical framing: full figure `s` 0.9–1.2 at `y` ≈ 1750–1950; waist-up `s` 1.4–1.6 at `y` ≈ 2100–2400 (feet below frame);
 a crowd/background figure `s` 0.5–0.7. Two characters facing each other: put one at x≈270, the other at x≈810 with `flip`.
 
+### Holding things — read this before any shot where a hand holds, grips, shoots or carries something
+A held prop is drawn INSIDE the hand (its grip point sits in the closed fingers), so it moves with the hand automatically.
+1. **Never draw a held object as a separate shape** placed near the hand in scene coordinates — it will float, lie flat or
+   miss the fingers as soon as the arm moves. Pass it as `rProp`/`lProp` with `rPose`/`lPose = HP.grip`.
+2. **Always set `rPropAngle` / `lPropAngle`** (screen degrees: −90 = straight up). Without it the prop turns with the forearm,
+   which is why a bow held at arm's length lies flat. Animate the angle with `tw()` for swings and raises.
+3. **Bows: only with `archer()`** — it puts the bow in the bow hand, the string hand on the string, the arrow on the string,
+   the elbow back at full draw:
+   ```tsx
+   <Hero look={LOOK.rama} o={OUT.rama} t={t} {...archer({ aim: -10, draw: tw(s, [0.4, 1.2], [0, 1]) })} />
+   ```
+   `aim` degrees (0 level, negative up), `draw` 0→1, `arrow` false after the release (fly a separate arrow from the bow tip),
+   `bow: { gold: true, glow: 1 }` for a divine bow (Gandiva, Pinaka), `bow: { wood: "#4a3020" }` for a hunter's bow.
+   Faces viewer-right; mirror the whole character with `<At … flip>` to shoot left. Bow carried, not drawn: `{...ARMS.bowAtSide}`.
+   A custom bow component of your own must use the same grip frame (grip at 0,0, limbs along ±y, string at −x).
+4. **Arm presets `ARMS`** (spread, then override): `rest` (arms hanging — the default standing pose), `akimbo` (fists on
+   hips — only for a defiant moment), `bless`, `namaste` (only when the story says so), `holdUpright` (weapon upright in
+   the right hand, add `rProp`), `bowAtSide`. **Do not leave characters with hands on hips** by default.
+5. Two characters struggling over one object (snatching a bow, a tug-of-war): give the object to ONE hand as its prop and
+   move the other character's hand target onto the object's position; switch owner at the snatch moment.
+6. After coding, zoom-check every hand that holds something: `pipeline/closeup.sh REEL-<reel> <t> <x> <y>`.
+Look at all of this on the model sheet `KIT-sheet-4` (`pipeline/stills.sh KIT-sheet-4 0 1`).
+
 ### Hand poses `HP`
 `relax` (soft, hanging) · `hang` (side view, by the thigh) · `fist` · `grip` (closes around a prop) · `open` (palm out, fingers spread) ·
-`bless` (abhaya mudra — raise the hand, set wrist ±90) · `point` · `claw` (demon threat) · `gyan` (meditation, thumb + index) · `hold` (cupped, carrying).
+`bless` (abhaya mudra — raise the hand, set wrist ±90) · `point` · `claw` (demon threat) · `gyan` (meditation, thumb + index) · `hold` (cupped, carrying) ·
+`draw` (pulling a bowstring; `archer()` sets it for you).
 Use `grip` with every held prop. Never put two hands together in front of the chest unless you mean namaste.
 
 ### Ready looks (`LOOK.x` + `OUT.x`)
@@ -95,7 +120,8 @@ Colour by role (Shiva ash-blue + tiger skin feel, Vishnu/Krishna/Rama blue, Hanu
 ### Other parts
 `RHead {look, e, t, seed}` (head alone — portraits, medallions, extra heads) · `Hand {pose, skin, line, rings?, prop?, size?}` ·
 `Gem {x, y, r, c}` · `PearlString {a, c, b, n, r}` · props `Sword {len}`, `Gada {len}`, `Pasha {t, glow}`, `Lotus {glow}`, `Sruva` (ghee ladle).
-Model sheets to look at the cast: compositions `KIT-sheet-0` … `KIT-sheet-3` (`pipeline/stills.sh KIT-sheet-3 0`).
+Archery and arm presets: `Bow {pull, h, arrow, arrowLen, wood, gold, glow, arrowGlow}`, `archer({aim, draw, arrow, reach, bow})`, `ARMS`.
+Model sheets to look at the cast: compositions `KIT-sheet-0` … `KIT-sheet-4` (`pipeline/stills.sh KIT-sheet-4 0 1` = archery + arm presets).
 
 ## 3. Older flat cast and props — `kit/cast.tsx`, `cast2.tsx`, `cast3.tsx`, `cast5.tsx`
 Simpler 2D figures (use for distant crowds or when a character has no realistic version yet) and many useful props/sets:

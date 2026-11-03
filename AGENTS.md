@@ -33,7 +33,9 @@ Run every command from the repository root. Python is `.venv/bin/python`.
    story. (The optional end card is the only exception and is already built.)
 2. **Everything drawn in code** with the kit. Never use AI images, AI video, stock photos, clip art or web images.
 3. **Characters look real**: `Hero` from `remotion/src/kit/real.tsx` with a `Look` + `Outfit` (ready ones in `kit/realcast.tsx`).
-   Hands do the right gesture and hold props properly; ornaments on; iconography correct.
+   Hands do the right gesture; ornaments on; iconography correct. **Anything held** is passed as `rProp`/`lProp` with
+   `rPropAngle`/`lPropAngle` (never drawn as a separate shape near the hand); **bows only via `archer()`**; standing
+   characters use `ARMS.rest`, not hands on hips. See "Holding things" in the kit reference.
 4. **Maps of India only from `kit/india.tsx`** (shows all of Jammu & Kashmir, Ladakh, Arunachal Pradesh and the islands).
    Never hand-draw India's outline: incorrect borders are illegal to publish in India.
 5. **Respectful and non-graphic**: deities dignified; violence shown by impact and reaction, never blood.
@@ -96,6 +98,7 @@ pipeline/stills.sh REEL-<reel> <t1,t2,…>        # seconds; middle of every sho
 Writes `out/stills/REEL-<reel>/f*.jpg` and `sheet.jpg`. **Open and look at every image**, check it against
 `.agents/skills/motion-reel/references/review.md`, fix, re-render the changed stills, look again — until nothing fails.
 Action shots: `pipeline/frames.sh REEL-<reel> <start_seconds> 8 6` → a strip of 8 frames to judge the motion.
+Hands and held objects: `pipeline/closeup.sh REEL-<reel> <t> <x> <y> [w] [h]` → a 2× close-up; check every grip, bow and string.
 
 ### 7. Sound effects
 Write `reels/<reel>/sfx.py` (`.agents/skills/motion-reel/references/sound.md`; examples in `reels/example-*/sfx.py`), then

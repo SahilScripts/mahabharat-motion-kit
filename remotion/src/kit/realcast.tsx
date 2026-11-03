@@ -7,7 +7,7 @@
  */
 import React from "react";
 import { AbsoluteFill, Composition } from "remotion";
-import { Gada, Hand, HP, Hero, Lotus, Pasha, RealDefs, RHead, RL, Sruva, Sword, type Char, type Look, type Outfit } from "./real";
+import { ARMS, archer, Gada, Hand, HP, Hero, Lotus, Pasha, RealDefs, RHead, RL, Sruva, Sword, type Char, type Look, type Outfit } from "./real";
 
 export const LOOK: Record<string, Look> = {
   ravana: { skin: "#6a4530", line: "#2a160c", hair: "#0e0806", crown: "kirita", stache: "handle", tilak: "tripundra", gem: RL.ruby },
@@ -117,6 +117,24 @@ export const RealSheet: React.FC<{ part: number }> = ({ part }) => {
             <SheetCell x={760} y={1700} s={1.5}>
               <RHead look={LOOK.kaikesi} t={t} e={{ lookX: -0.5 }} />
             </SheetCell>
+          </g>
+        )}
+        {part === 4 && (
+          <g>
+            {/* row 1: archer at rest on the string, half draw, full draw; row 2: aiming up, aiming down, mirrored */}
+            <SheetCell x={180} y={900} s={0.55}><Hero look={LOOK.rama} o={OUT.rama} t={t} {...archer({ aim: 0, draw: 0 })} /></SheetCell>
+            <SheetCell x={540} y={900} s={0.55}><Hero look={LOOK.rama} o={OUT.rama} t={t} {...archer({ aim: 0, draw: 0.5 })} /></SheetCell>
+            <SheetCell x={880} y={900} s={0.55}><Hero look={LOOK.lakshmana} o={OUT.lakshmana} t={t} {...archer({ aim: 0, draw: 1 })} /></SheetCell>
+            <SheetCell x={180} y={1450} s={0.55}><Hero look={LOOK.rama} o={OUT.rama} t={t} {...archer({ aim: -30, draw: 1 })} /></SheetCell>
+            <SheetCell x={540} y={1450} s={0.55}><Hero look={LOOK.rama} o={OUT.rama} t={t} {...archer({ aim: 15, draw: 1 })} /></SheetCell>
+            <g transform="translate(900 1450) scale(-0.55 0.55)"><Hero look={LOOK.vanara} o={OUT.vanara} t={t} {...archer({ aim: -10, draw: 1, bow: { wood: "#4a3020" } })} /></g>
+            {/* row 3: arm presets */}
+            <SheetCell x={120} y={1890} s={0.4}><Hero look={LOOK.indra} o={OUT.indra} t={t} {...ARMS.rest} /></SheetCell>
+            <SheetCell x={300} y={1890} s={0.4}><Hero look={LOOK.indra} o={OUT.indra} t={t} {...ARMS.akimbo} /></SheetCell>
+            <SheetCell x={480} y={1890} s={0.4}><Hero look={LOOK.indra} o={OUT.indra} t={t} {...ARMS.bless} /></SheetCell>
+            <SheetCell x={660} y={1890} s={0.4}><Hero look={LOOK.indra} o={OUT.indra} t={t} {...ARMS.namaste} /></SheetCell>
+            <SheetCell x={830} y={1890} s={0.4}><Hero look={LOOK.hanuman} o={OUT.hanuman} t={t} {...ARMS.holdUpright} rProp={<Gada />} /></SheetCell>
+            <SheetCell x={990} y={1890} s={0.4}><Hero look={LOOK.rama} o={OUT.rama} t={t} {...ARMS.bowAtSide} /></SheetCell>
           </g>
         )}
         {part === 3 && (

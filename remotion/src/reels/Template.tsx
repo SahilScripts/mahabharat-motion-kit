@@ -12,13 +12,14 @@
  *    L({ d, id, dof, children }) draws a flat layer at depth d: 0.05 sky, 0.3–0.6 far scenery, 1 the characters,
  *    1.3+ foreground. The camera then gives parallax, depth-of-field blur and motion blur for free.
  *  - Characters come from ../kit/real (Hero + Look + Outfit) and ../kit/realcast (ready looks: LOOK.ravana …).
+ *    Held objects: rProp/lProp + rPropAngle/lPropAngle; bows: {...archer({ aim, draw })}; standing arms: {...ARMS.rest}.
  *    Put <RealDefs /> once inside every layer that holds a real-cast character.
  *  - Shot-local word cues: open public/mg/<REEL>/manifest.json, find the word, subtract the shot's start.
  */
 import React from "react";
 import { AbsoluteFill, Audio, Composition, Easing, staticFile, useCurrentFrame, type CalculateMetadataFunction } from "remotion";
 import { At, C0, Cloud, Fire, Particles, Sky, rig, tw, FPS, W, H, type Words } from "../kit/scene";
-import { HP, Hero, RealDefs, Sword } from "../kit/real";
+import { ARMS, HP, Hero, RealDefs, Sword } from "../kit/real";
 import { LOOK, OUT } from "../kit/realcast";
 
 const REEL = "template"; // ← reels/<REEL>/ and public/mg/<REEL>/ — lowercase letters, digits and - only
@@ -41,8 +42,10 @@ const S0: React.FC<SP> = ({ t, s, dur }) => {
           <g>
             <RealDefs />
             <At x={540} y={1760} s={1.05}>
-              <Hero look={LOOK.ravana} o={OUT.ravana} t={t} rHand={[-150 - 100 * raise, -420 - 560 * raise]} rPose={HP.grip} rProp={<Sword />}
-                lHand={[170, -470]} lPose={HP.relax} e={{ anger: 0.3 + 0.5 * raise }} />
+              {/* held prop: rProp + rPropAngle (screen angle) — the sword swings from pointing down-left to straight up */}
+              <Hero look={LOOK.ravana} o={OUT.ravana} t={t} {...ARMS.rest}
+                rHand={[-150 - 100 * raise, -420 - 560 * raise]} rPose={HP.grip} rProp={<Sword />} rPropAngle={tw(raise, [0, 1], [150, -80])}
+                e={{ anger: 0.3 + 0.5 * raise }} />
             </At>
           </g>
         ),

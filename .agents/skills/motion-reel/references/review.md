@@ -10,11 +10,15 @@ and check every line below. Fix, re-render those stills, and look again. Most fi
 - [ ] Characters do not overlap each other confusingly; two characters in a shot have space between them.
 - [ ] No empty frame: the shot has a background, a subject and a foreground layer.
 
-## Characters
+## Characters (zoom in: `pipeline/closeup.sh REEL-<reel> <t> <x> <y>` — at contact-sheet size hands are a few pixels)
 - [ ] Faces are visible: not hidden by fire, props, an arm or another character.
 - [ ] Each hand does a readable gesture for the moment: gripping (with a prop), blessing, pointing, clawing. Hands together in
       front of the chest read as namaste — only use that on purpose.
-- [ ] Props sit in the grip (a sword handle in the fist, not floating beside it), at a believable angle.
+- [ ] Props sit in the grip (a sword handle in the fist, not floating beside it), at a believable angle. Every held object
+      is an `rProp`/`lProp` with a `PropAngle` — never a separate shape drawn near the hand.
+- [ ] Archers: bow upright in the bow hand, string hand ON the string, arrow on the string pointing at the target
+      (use `archer()`); after the release the arrow is gone from the string.
+- [ ] Nobody stands with hands on hips unless the moment calls for it; default arms hang (`ARMS.rest`).
 - [ ] Iconography right (crown type, skin colour, tail, number of heads, weapon).
 - [ ] Seated figures look seated (legs crossed on the ground), not standing pillars.
 - [ ] Characters face whom they speak to (use `flip` and `lookX`).

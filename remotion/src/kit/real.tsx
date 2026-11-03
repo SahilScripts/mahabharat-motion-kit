@@ -186,7 +186,10 @@ export const HP: Record<string, HandPose> = {
   claw: { curl: [0.4, 0.45, 0.5, 0.5, 0.55], spread: 1.3, view: "back" },
   gyan: { curl: [0.62, 0.66, 0.06, 0.12, 0.18], spread: 0.6, view: "palm" },
   hold: { curl: [0.35, 0.18, 0.2, 0.26, 0.32], spread: 0.9, view: "palm" },
+  /** pulling a bowstring: index + middle + ring hooked on the string, thumb tucked (use with archer()) */
+  draw: { curl: [0.75, 0.58, 0.62, 0.66, 0.9], spread: 0.15, view: "side", thumb: 0.75 },
 };
+HP.pinch = HP.draw;
 export const mixHand = (a: HandPose, b: HandPose, k: number): HandPose => (k <= 0 ? a : k >= 1 ? b : {
   curl: a.curl.map((c, i) => c + (b.curl[i] - c) * k), spread: (a.spread ?? 0.3) + ((b.spread ?? 0.3) - (a.spread ?? 0.3)) * k, view: k < 0.5 ? a.view : b.view,
   thumb: (a.thumb ?? 0) + ((b.thumb ?? 0) - (a.thumb ?? 0)) * k,
@@ -345,7 +348,9 @@ export const Hand: React.FC<{ pose: HandPose; skin: string; line: string; rings?
 export const RArm: React.FC<{
   s: P; h: P; bend: number; skin: string; line: string; t: number; pose: HandPose; wrist?: number; flip?: boolean;
   prop?: React.ReactNode; bulk?: number; armlet?: boolean; kada?: number; rings?: boolean; a?: number; b?: number; sleeve?: string;
-}> = ({ s, h, bend, skin, line, t, pose, wrist = 0, flip = false, prop, bulk = 1, armlet = true, kada = 2, rings = true, a = 176, b = 160, sleeve }) => {
+  /** screen angle (degrees) the held prop's shaft (its −y axis) points to, whatever the arm does: −90 = straight up, 0 = right, 90 = down */
+  propAngle?: number;
+}> = ({ s, h, bend, skin, line, t, pose, wrist = 0, flip = false, prop, bulk = 1, armlet = true, kada = 2, rings = true, a = 176, b = 160, sleeve, propAngle }) => {
   const k = limb(s, h, a, b, bend);
   const r1 = ang(s, k.e);
   const r2 = ang(k.e, k.h);
@@ -361,7 +366,11 @@ export const RArm: React.FC<{
       <g transform={`translate(${k.e[0]} ${k.e[1]}) rotate(${deg(r2)})`}>
         <Seg L={L2} w0={42 * bulk} wm={46 * bulk} w1={30 * bulk} fill={skin} line={line} rad={r2} bulge={0.25} />
         <g transform={`translate(${L2 - 2} 0) rotate(${wrist}) scale(1 ${flip ? -1 : 1})`}>
-          <Hand pose={pose} skin={skin} line={line} rings={rings} prop={prop} size={bulk * 1.02} />
+          <Hand pose={pose} skin={skin} line={line} rings={rings} size={bulk * 1.02}
+            prop={prop && propAngle !== undefined
+              // undo the left hand's mirror, then cancel the forearm + wrist rotation so the prop keeps its screen angle
+              ? <g transform={flip ? "scale(1 -1)" : undefined}><g transform={`rotate(${propAngle + 90 - deg(r2) - wrist})`}>{prop}</g></g>
+              : prop} />
         </g>
         {kada > 0 && <Kada x={L2 - 4} w={30 * bulk} n={kada} />}
       </g>
@@ -833,11 +842,14 @@ export type Char = {
   rHand?: P; lHand?: P; rPose?: HandPose; lPose?: HandPose; rWrist?: number; lWrist?: number; rProp?: React.ReactNode; lProp?: React.ReactNode;
   headTilt?: number; extraHeads?: React.ReactNode; glow?: number; aura?: string; rBend?: number; lBend?: number; stance?: number; lean?: number;
   lFront?: boolean; rFront?: boolean; sleeve?: string;
+  /** keep a held prop at a fixed screen angle (see RArm.propAngle): −90 = shaft straight up */
+  rPropAngle?: number; lPropAngle?: number;
 };
 
 export const Hero: React.FC<Char> = ({
   look, o, t, e, bulk = 1, seed = 0, rHand = [-150, -400], lHand = [150, -400], rPose = HP.hang, lPose = HP.hang, rWrist = 0, lWrist = 0, rProp, lProp,
   headTilt = 0, extraHeads, glow = 0, aura = "#ffd27a", rBend = 0, lBend = 0, stance = 0, lean = 0, rFront = true, lFront = true, sleeve,
+  rPropAngle, lPropAngle,
 }) => {
   const br = Math.sin(t * 1.6 + seed) * 2.4;
   const rS: P = [SH.r[0] * bulk, SH.r[1] - br * 0.4];
@@ -845,8 +857,8 @@ export const Hero: React.FC<Char> = ({
   // elbows out by default: right arm (viewer left) bends with +1 when the hand is below the shoulder
   const rb = rBend || (rHand[1] > rS[1] ? 1 : -1);
   const lb = lBend || (lHand[1] > lS[1] ? -1 : 1);
-  const armR = <RArm s={rS} h={rHand} bend={rb} skin={look.skin} line={look.line} t={t} pose={rPose} wrist={rWrist} flip={false} prop={rProp} bulk={bulk} sleeve={sleeve} />;
-  const armL = <RArm s={lS} h={lHand} bend={lb} skin={look.skin} line={look.line} t={t} pose={lPose} wrist={lWrist} flip prop={lProp} bulk={bulk} sleeve={sleeve} />;
+  const armR = <RArm s={rS} h={rHand} bend={rb} skin={look.skin} line={look.line} t={t} pose={rPose} wrist={rWrist} flip={false} prop={rProp} propAngle={rPropAngle} bulk={bulk} sleeve={sleeve} />;
+  const armL = <RArm s={lS} h={lHand} bend={lb} skin={look.skin} line={look.line} t={t} pose={lPose} wrist={lWrist} flip prop={lProp} propAngle={lPropAngle} bulk={bulk} sleeve={sleeve} />;
   const up = o.lower === "seated" ? 300 : 0;
   return (
     <g transform={`rotate(${lean} 0 ${up ? -200 : -400})`}>
@@ -927,3 +939,109 @@ export const Sruva: React.FC = () => (
     <ellipse cx={0} cy={-158} rx={9} ry={4} fill="#ffcf6a" />
   </g>
 );
+
+// ---------------------------------------------------------------- archery and arm presets
+
+/**
+ * A long Indian bow in the GRIP frame used by every held prop: grip at the origin, limbs along ±y, the target toward +x,
+ * the string behind the grip (−x). `pull` = how far the string's middle (the nock) is pulled back from the grip, in px.
+ * Use it through archer(), which also places both hands; hold it alone with propAngle = −90 (bow upright at the side).
+ */
+export const Bow: React.FC<{ pull?: number; h?: number; arrow?: boolean; arrowLen?: number; wood?: string; gold?: boolean; glow?: number; arrowGlow?: string }> = ({
+  pull = 34, h = 300, arrow = false, arrowLen = 430, wood = "#6a3a16", gold = false, glow = 0, arrowGlow,
+}) => {
+  const k = Math.min(1, Math.max(0, (pull - 34) / 380)); // 0 = slack, 1 = full draw
+  const tipX = -34 - k * 34; // tips bend back toward the archer as the bow is drawn
+  const tipY = h - k * 22;
+  const limb = `M${tipX} ${-tipY} C${20 - k * 6} ${-h * 0.72} ${26} ${-h * 0.3} 8 -34 L8 34 C26 ${h * 0.3} ${20 - k * 6} ${h * 0.72} ${tipX} ${tipY}`;
+  const nock = -Math.max(pull, -tipX + 2);
+  return (
+    <g>
+      {glow > 0 && <ellipse cx={-20} cy={0} rx={90} ry={h * 1.05} fill="#ffd86a" opacity={0.2 * glow} />}
+      <path d={`M${tipX} ${-tipY} L${nock} 0 L${tipX} ${tipY}`} stroke="#f4ead2" strokeWidth={2.4} fill="none" />
+      <path d={limb} stroke={gold ? RL.goldH : wood} strokeWidth={14} fill="none" strokeLinecap="round" />
+      <path d={limb} stroke={gold ? RL.goldD : "#2a1406"} strokeWidth={14} strokeOpacity={0.35} strokeDasharray="2 10" fill="none" />
+      <path d={limb} stroke="#fff" strokeOpacity={0.14} strokeWidth={4} fill="none" transform="translate(3 0)" />
+      <rect x={-2} y={-36} width={20} height={72} rx={7} fill="#7a1a16" stroke={RL.goldD} strokeWidth={1.5} />
+      {gold && <Gem x={8} y={0} r={5} c={RL.emer} />}
+      <circle cx={tipX} cy={-tipY} r={5} fill={RL.gold} />
+      <circle cx={tipX} cy={tipY} r={5} fill={RL.gold} />
+      {arrow && (
+        <g transform={`translate(${nock} 0)`}>
+          {arrowGlow && <ellipse cx={arrowLen * 0.55} cy={0} rx={arrowLen * 0.6} ry={16} fill={arrowGlow} opacity={0.35} />}
+          <line x1={0} y1={0} x2={arrowLen} y2={0} stroke="#d8b878" strokeWidth={5} />
+          <path d={`M${arrowLen + 26} 0 L${arrowLen - 4} -10 L${arrowLen} 0 L${arrowLen - 4} 10Z`} fill="#dfe6ee" stroke="#5a6470" strokeWidth={1.2} />
+          <path d="M2 0 L-20 -10 L-10 0 L-20 10Z M18 0 L-4 -10 L6 0 L-4 10Z" fill="#c8302a" />
+        </g>
+      )}
+    </g>
+  );
+};
+
+type ArcherOpts = {
+  /** aim in degrees: 0 = level toward viewer-right, negative = up (e.g. −25 shooting at the sky), positive = down */
+  aim?: number;
+  /** 0 = arrow on the string, not pulled · 1 = full draw (string hand at the chin) */
+  draw?: number;
+  /** show an arrow on the string (set false right after the release) */
+  arrow?: boolean;
+  /** shoulder→wrist reach of the bow arm (≤ 330) */
+  reach?: number;
+  bow?: Omit<React.ComponentProps<typeof Bow>, "pull" | "arrow">;
+  bulk?: number;
+};
+
+/**
+ * Everything a Hero needs to shoot a bow, with the hands ON the bow and ON the string:
+ *   <Hero look={LOOK.rama} o={OUT.rama} t={t} {...archer({ aim: -10, draw: 1 })} />
+ * The character faces viewer-right (character's LEFT hand holds the bow, RIGHT hand pulls). To face left, mirror the
+ * whole character with <At … flip>. Release = animate draw from 1 → 0 quickly and set arrow: false (fly a separate arrow).
+ */
+export const archer = ({ aim = 0, draw = 1, arrow = true, reach = 300, bow = {}, bulk = 1 }: ArcherOpts = {}): Partial<Char> => {
+  const a = (aim * Math.PI) / 180;
+  const dir: P = [Math.cos(a), Math.sin(a)];
+  const hs = bulk * 1.02;                                   // hand size: a held prop sits 60·hs past the wrist
+  const lS: P = [SH.l[0] * bulk, SH.l[1]];
+  const rS: P = [SH.r[0] * bulk, SH.r[1]];
+  const C: P = [-24, -792];                                 // anchor: the nock at full draw touches the cheek / jaw
+  // bow grip G = C + L·dir, with the bow wrist (G − 60·hs·dir) exactly `reach` from the left shoulder
+  const v: P = [C[0] - lS[0], C[1] - lS[1]];
+  const vd = v[0] * dir[0] + v[1] * dir[1];
+  const m = -vd + Math.sqrt(Math.max(0, vd * vd - (v[0] * v[0] + v[1] * v[1]) + reach * reach));
+  const L = m + 60 * hs;
+  const G: P = [C[0] + dir[0] * L, C[1] + dir[1] * L];
+  const lWrist: P = [G[0] - dir[0] * 60 * hs, G[1] - dir[1] * 60 * hs];
+  const d = Math.min(1, Math.max(0, draw));
+  const pull = 40 + d * (L - 40);                           // grip → nock along the arrow line
+  const nock: P = [G[0] - dir[0] * pull, G[1] - dir[1] * pull];
+  const rWrist: P = [nock[0] - dir[0] * 46 * hs, nock[1] - dir[1] * 46 * hs]; // fingers hook the string ~46 px past the wrist
+  // elbows: drawing elbow goes back (viewer-left) and up; bow elbow stays slightly below the straight line
+  const pick = (s0: P, h: P, score: (e: P) => number) => (score(limb(s0, h, 176, 160, 1).e) <= score(limb(s0, h, 176, 160, -1).e) ? 1 : -1);
+  const rBend = pick(rS, rWrist, (e) => e[0] + e[1] * 0.4);
+  const lBend = pick(lS, lWrist, (e) => -e[1]);
+  return {
+    lHand: lWrist, lPose: HP.grip, lPropAngle: aim - 90, lBend,
+    lProp: <Bow pull={pull / hs} arrow={arrow} arrowLen={(L + 70) / hs} {...bow} />,
+    rHand: rWrist, rPose: d > 0.05 ? HP.draw : HP.relax, rBend, rWrist: 0, rFront: false, // the drawing arm is the far arm
+    e: { lookX: 0.8, anger: 0.3 },
+  };
+};
+
+/**
+ * Arm presets — spread them into a Hero and override what you need:  <Hero … {...ARMS.rest} rProp={…} />
+ * Positions are wrist targets relative to the feet (character's right hand = viewer-left).
+ */
+export const ARMS = {
+  /** arms hanging naturally at the sides (use this as the default standing pose, NOT hands-on-hips) */
+  rest: { rHand: [-138, -400] as P, lHand: [138, -400] as P, rPose: HP.hang, lPose: HP.hang, rBend: -1, lBend: 1 },
+  /** fists on the hips — a deliberate proud / defiant pose only */
+  akimbo: { rHand: [-150, -470] as P, lHand: [150, -470] as P, rPose: HP.fist, lPose: HP.fist },
+  /** right hand raised in blessing (abhaya), left relaxed at the side */
+  bless: { rHand: [-170, -760] as P, rPose: HP.bless, rWrist: -90, lHand: [150, -405] as P, lPose: HP.hang, lBend: 1 },
+  /** both palms joined at the chest — namaste / prayer; use ONLY when the story says so */
+  namaste: { rHand: [-58, -600] as P, lHand: [58, -600] as P, rPose: HP.open, lPose: HP.open, rWrist: -62, lWrist: 62 },
+  /** holding a long weapon (sword, gada, trishul, spear) upright at the side in the right hand */
+  holdUpright: { rHand: [-190, -450] as P, rPose: HP.grip, rPropAngle: -90, rBend: -1, lHand: [150, -405] as P, lPose: HP.hang, lBend: 1 },
+  /** bow carried upright in the left hand (not drawn) */
+  bowAtSide: { lHand: [175, -440] as P, lPose: HP.grip, lPropAngle: -90, lBend: 1, lProp: <Bow />, rHand: [-150, -405] as P, rPose: HP.hang, rBend: -1 },
+} satisfies Record<string, Partial<Char>>;
