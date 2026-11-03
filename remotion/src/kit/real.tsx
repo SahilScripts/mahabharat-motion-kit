@@ -1042,6 +1042,8 @@ export const ARMS = {
   namaste: { rHand: [-58, -600] as P, lHand: [58, -600] as P, rPose: HP.open, lPose: HP.open, rWrist: -62, lWrist: 62 },
   /** holding a long weapon (sword, gada, trishul, spear) upright at the side in the right hand */
   holdUpright: { rHand: [-190, -450] as P, rPose: HP.grip, rPropAngle: -90, rBend: -1, lHand: [150, -405] as P, lPose: HP.hang, lBend: 1 },
+  /** seated meditation (lower: "seated"): gyan-mudra hands resting on the knees, elbows relaxed */
+  meditate: { rHand: [-172, -425] as P, lHand: [172, -425] as P, rPose: HP.gyan, lPose: HP.gyan, rWrist: -20, lWrist: 20 },
   /** bow carried upright in the left hand (not drawn) */
   bowAtSide: { lHand: [175, -440] as P, lPose: HP.grip, lPropAngle: -90, lBend: 1, lProp: <Bow />, rHand: [-150, -405] as P, rPose: HP.hang, rBend: -1 },
 } satisfies Record<string, Partial<Char>>;

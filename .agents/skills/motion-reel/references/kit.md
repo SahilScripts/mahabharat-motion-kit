@@ -88,6 +88,10 @@ A held prop is drawn INSIDE the hand (its grip point sits in the closed fingers)
 4. **Arm presets `ARMS`** (spread, then override): `rest` (arms hanging — the default standing pose), `akimbo` (fists on
    hips — only for a defiant moment), `bless`, `namaste` (only when the story says so), `holdUpright` (weapon upright in
    the right hand, add `rProp`), `bowAtSide`. **Do not leave characters with hands on hips** by default.
+   Seated meditation: `ARMS.meditate` (hands on the knees) — never hands flared at the belly.
+   A raised hand (blessing, wave) must be ABOVE the shoulder (y < -716, e.g. `[±170, -770]`): just below it the
+   elbow flips up and the hand reads as "behind the head". Two characters touching: put both hands on the same
+   screen point between them, don't let an arm pass through the other body.
 5. Two characters struggling over one object (snatching a bow, a tug-of-war): give the object to ONE hand as its prop and
    move the other character's hand target onto the object's position; switch owner at the snatch moment.
 6. After coding, zoom-check every hand that holds something: `pipeline/closeup.sh REEL-<reel> <t> <x> <y>`.
