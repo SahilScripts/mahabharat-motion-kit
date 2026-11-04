@@ -174,10 +174,11 @@ const Seg: React.FC<{ L: number; w0: number; wm: number; w1: number; fill: strin
   );
 };
 
-export type HandPose = { curl: number[]; spread?: number; view?: "back" | "palm" | "side"; thumb?: number };
+export type HandPose = { curl: number[]; spread?: number; view?: "back" | "palm" | "side" | "join" | "rest"; thumb?: number; inward?: boolean };
 export const HP: Record<string, HandPose> = {
   relax: { curl: [0.2, 0.22, 0.3, 0.36, 0.42], spread: 0.3, view: "back" },
-  hang: { curl: [0.15, 0.3, 0.38, 0.45, 0.5], spread: 0.2, view: "side" },
+  /** arm hanging at the side: a relaxed hand, fingers together and nearly straight, easing in toward the thigh */
+  hang: { curl: [0.1, 0.12, 0.14, 0.16, 0.18], spread: 0.1, view: "rest", inward: true },
   fist: { curl: [0.9, 1, 1, 1, 1], view: "side", thumb: 0.9 },
   grip: { curl: [0.8, 0.86, 0.92, 0.96, 1], view: "side", thumb: 0.85 },
   open: { curl: [0.05, 0, 0, 0.02, 0.06], spread: 1, view: "palm" },
@@ -188,10 +189,12 @@ export const HP: Record<string, HandPose> = {
   hold: { curl: [0.35, 0.18, 0.2, 0.26, 0.32], spread: 0.9, view: "palm" },
   /** pulling a bowstring: index + middle + ring hooked on the string, thumb tucked (use with archer()) */
   draw: { curl: [0.75, 0.58, 0.62, 0.66, 0.9], spread: 0.15, view: "side", thumb: 0.75 },
+  /** one half of joined palms (anjali / namaste): hand edge-on, palm pressed flat against the other hand — use via ARMS.namaste */
+  join: { curl: [0, 0, 0, 0, 0], view: "join" },
 };
 HP.pinch = HP.draw;
 export const mixHand = (a: HandPose, b: HandPose, k: number): HandPose => (k <= 0 ? a : k >= 1 ? b : {
-  curl: a.curl.map((c, i) => c + (b.curl[i] - c) * k), spread: (a.spread ?? 0.3) + ((b.spread ?? 0.3) - (a.spread ?? 0.3)) * k, view: k < 0.5 ? a.view : b.view,
+  curl: a.curl.map((c, i) => c + (b.curl[i] - c) * k), spread: (a.spread ?? 0.3) + ((b.spread ?? 0.3) - (a.spread ?? 0.3)) * k, view: k < 0.5 ? a.view : b.view, inward: k < 0.5 ? a.inward : b.inward,
   thumb: (a.thumb ?? 0) + ((b.thumb ?? 0) - (a.thumb ?? 0)) * k,
 });
 
@@ -209,6 +212,50 @@ export const Hand: React.FC<{ pose: HandPose; skin: string; line: string; rings?
   const LEN = [0, 40, 44, 41, 33];
   const WID = [11.5, 10, 10.4, 9.6, 8.4];
   const nail = "#f0d0bc";
+  if (view === "rest") {
+    // relaxed hanging hand seen from the front: one tapered hand, fingers together and gently curved toward +y (the thigh),
+    // thumb lying along the −y edge. Wrist at 0, fingers toward +x.
+    const c = cu[2] ?? 0.14;
+    const tipY = 4 + 26 * c;
+    const hand = `M0 -14 C14 -16 34 -17 50 -15 C64 -13 80 -10 90 ${-6 + 10 * c} C98 ${-2 + 14 * c} 98 ${tipY + 6} 90 ${tipY + 8} C80 ${tipY + 8} 66 ${12 + 6 * c} 50 14 C34 15 14 15 0 14Z`;
+    return (
+      <g transform={`scale(${size})`}>
+        <path d={hand} fill={skin} stroke={line} strokeWidth={1.4} />
+        <path d={hand} fill="url(#rl-cylA)" opacity={0.55} />
+        {/* finger divisions from the knuckles to the tips */}
+        {[-7, -1, 5].map((y, i) => (
+          <path key={i} d={`M52 ${y} Q72 ${y + 1 + 4 * c} ${86 - i * 2} ${y + 3 + 14 * c}`} stroke="#000" strokeOpacity={0.15} strokeWidth={1.2} fill="none" />
+        ))}
+        <path d="M49 -15 Q53 0 49 14" stroke="#000" strokeOpacity={0.08} strokeWidth={1.2} fill="none" />
+        {[-11, -4, 3, 9].map((y) => <ellipse key={y} cx={47} cy={y} rx={3.4} ry={2.2} fill="#fff" opacity={0.1} />)}
+        <path d="M8 -11 Q26 -14 46 -13" stroke="#fff" strokeOpacity={0.13} strokeWidth={4} strokeLinecap="round" fill="none" />
+        {/* thumb along the front edge */}
+        <path d="M10 -12 C22 -22 40 -24 56 -21" stroke={line} strokeWidth={14} strokeLinecap="round" fill="none" />
+        <path d="M10 -12 C22 -22 40 -24 56 -21" stroke={skin} strokeWidth={11.5} strokeLinecap="round" fill="none" />
+        <path d="M14 -15 C24 -21 38 -23 50 -21" stroke="#fff" strokeOpacity={0.12} strokeWidth={3} strokeLinecap="round" fill="none" />
+        <ellipse cx={55} cy={-22} rx={4.2} ry={2.6} fill="#f0d0bc" opacity={0.85} />
+        {rings && <path d="M62 -2 L62 8" stroke={RL.gold} strokeWidth={3.4} strokeLinecap="round" />}
+      </g>
+    );
+  }
+  if (view === "join") {
+    // fingers along +x, the pressed palm on the +y seam (the other hand's side), the back of the hand toward −y
+    const out = "M-2 -13 C16 -16 34 -16 49 -14 C66 -13 84 -10 95 -4 Q103 2 101 9 L-2 9Z";
+    return (
+      <g transform={`scale(${size})`}>
+        <path d={out} fill={skin} stroke={line} strokeWidth={1.4} />
+        <path d={out} fill="url(#rl-cylA)" opacity={0.55} />
+        {/* finger divisions and knuckle creases */}
+        <path d="M50 -7 Q76 -6 94 -1 M50 -1 Q78 0 98 4" stroke="#000" strokeOpacity={0.16} strokeWidth={1.3} fill="none" />
+        <path d="M49 -14 Q52 -4 50 8 M74 -11 Q76 -3 75 8" stroke="#000" strokeOpacity={0.09} strokeWidth={1.2} fill="none" />
+        {[-10, -4].map((y) => <ellipse key={y} cx={47} cy={y} rx={4} ry={2.6} fill="#fff" opacity={0.12} />)}
+        <path d="M8 -11 Q24 -13 44 -12" stroke="#fff" strokeOpacity={0.14} strokeWidth={4} strokeLinecap="round" fill="none" />
+        {rings && <path d="M60 -1 L61 -10" stroke={RL.gold} strokeWidth={3.4} strokeLinecap="round" />}
+        {/* the seam where the two palms press together */}
+        <path d="M-2 9 L101 9" stroke="#000" strokeOpacity={0.28} strokeWidth={1.6} />
+      </g>
+    );
+  }
   const fingerEls: React.ReactNode[] = [];
   let palmEl: React.ReactNode;
   let thumbEl: React.ReactNode;
@@ -350,12 +397,20 @@ export const RArm: React.FC<{
   prop?: React.ReactNode; bulk?: number; armlet?: boolean; kada?: number; rings?: boolean; a?: number; b?: number; sleeve?: string;
   /** screen angle (degrees) the held prop's shaft (its −y axis) points to, whatever the arm does: −90 = straight up, 0 = right, 90 = down */
   propAngle?: number;
-}> = ({ s, h, bend, skin, line, t, pose, wrist = 0, flip = false, prop, bulk = 1, armlet = true, kada = 2, rings = true, a = 176, b = 160, sleeve, propAngle }) => {
+  /** screen angle (degrees) the fingers point to, whatever the forearm does (overrides wrist): −90 = straight up */
+  handAngle?: number;
+}> = ({ s, h, bend, skin, line, t, pose, wrist: wrist0 = 0, flip = false, prop, bulk = 1, armlet = true, kada = 2, rings = true, a = 176, b = 160, sleeve, propAngle, handAngle }) => {
   const k = limb(s, h, a, b, bend);
   const r1 = ang(s, k.e);
   const r2 = ang(k.e, k.h);
   const L1 = Math.hypot(k.e[0] - s[0], k.e[1] - s[1]);
   const L2 = Math.hypot(k.h[0] - k.e[0], k.h[1] - k.e[1]);
+  const wrist = handAngle === undefined ? wrist0 : handAngle - deg(r2);
+  // the resting hand (HP.hang) is mirrored so its fingers ease in toward the thigh, and it hangs straight down from the
+  // wrist (tipped a little toward the body) whatever angle the forearm is at; this fades out as the forearm lifts
+  const hflip = pose.inward ? !flip : flip;
+  const down = pose.view === "rest" ? Math.max(0, Math.min(1, (Math.sin(r2) - 0.35) / 0.45)) : 0;
+  const wr = wrist + ((flip ? 97 : 83) - deg(r2)) * down;
   return (
     <g>
       <g transform={`translate(${s[0]} ${s[1]}) rotate(${deg(r1)})`}>
@@ -365,11 +420,11 @@ export const RArm: React.FC<{
       </g>
       <g transform={`translate(${k.e[0]} ${k.e[1]}) rotate(${deg(r2)})`}>
         <Seg L={L2} w0={42 * bulk} wm={46 * bulk} w1={30 * bulk} fill={skin} line={line} rad={r2} bulge={0.25} />
-        <g transform={`translate(${L2 - 2} 0) rotate(${wrist}) scale(1 ${flip ? -1 : 1})`}>
+        <g transform={`translate(${L2 - 2} 0) rotate(${wr}) scale(1 ${hflip ? -1 : 1})`}>
           <Hand pose={pose} skin={skin} line={line} rings={rings} size={bulk * 1.02}
             prop={prop && propAngle !== undefined
               // undo the left hand's mirror, then cancel the forearm + wrist rotation so the prop keeps its screen angle
-              ? <g transform={flip ? "scale(1 -1)" : undefined}><g transform={`rotate(${propAngle + 90 - deg(r2) - wrist})`}>{prop}</g></g>
+              ? <g transform={hflip ? "scale(1 -1)" : undefined}><g transform={`rotate(${propAngle + 90 - deg(r2) - wrist})`}>{prop}</g></g>
               : prop} />
         </g>
         {kada > 0 && <Kada x={L2 - 4} w={30 * bulk} n={kada} />}
@@ -702,24 +757,43 @@ const Necklaces: React.FC<{ o: Outfit; t: number; bulk: number }> = ({ o, t, bul
  */
 export const SH = { r: [-116, -716] as P, l: [116, -716] as P, neck: -800 };
 
-export const Body: React.FC<{ look: Look; o: Outfit; t: number; bulk?: number; breathe?: number; stance?: number }> = ({ look, o, t, bulk = 1, breathe = 1, stance = 0 }) => {
+export const Body: React.FC<{ look: Look; o: Outfit; t: number; bulk?: number; breathe?: number; stance?: number; crouch?: number }> = ({ look, o, t, bulk = 1, breathe = 1, stance = 0, crouch = 0 }) => {
   const { skin, line } = look;
   const b = Math.sin(t * 1.6) * 2.4 * breathe;
   const W = (x: number) => x * bulk;
   const torso = `M-24 -790 L24 -790 Q30 -746 ${W(72)} -738 Q${W(122)} -732 ${W(134)} -708 Q${W(140)} -676 ${W(112)} -640 Q${W(98)} -590 ${W(84)} -540 Q${W(82)} -508 ${W(94)} -476 L${W(-94)} -476 Q${W(-82)} -508 ${W(-84)} -540 Q${W(-98)} -590 ${W(-112)} -640 Q${W(-140)} -676 ${W(-134)} -708 Q${W(-122)} -732 ${W(-72)} -738 Q-30 -746 -24 -790Z`;
   const lower = o.lower ?? "long";
   const sway = Math.sin(t * 1.3) * 3;
+  // crouch (knee / shorts only): the whole upper body drops by D and the legs fold, knees out, feet planted wider
+  const D = lower === "knee" || lower === "shorts" ? crouch * CROUCH_DROP : 0;
+  const fx = (sx: number) => sx * (58 + stance * 34 + 70 * crouch);
   return (
     <g>
       {/* legs + feet */}
       {lower !== "seated" && [-1, 1].map((sx) => (
         <g key={sx}>
-          {(lower === "knee" || lower === "shorts") && (
+          {(lower === "knee" || lower === "shorts") && D > 0 && (() => {
+            const H: P = [sx * (52 + stance * 20), -300 + D];
+            const F: P = [fx(sx) - sx * 4, -40];
+            const k = limb(H, F, 150, 150, -sx);
+            const a1 = ang(H, k.e), a2 = ang(k.e, k.h);
+            return (
+              <g>
+                <g transform={`translate(${k.e[0]} ${k.e[1]}) rotate(${deg(a2)})`}>
+                  <Seg L={Math.hypot(k.h[0] - k.e[0], k.h[1] - k.e[1])} w0={W(52)} wm={W(50)} w1={W(34)} fill={skin} line={line} rad={a2} bulge={0.3} />
+                </g>
+                <g transform={`translate(${H[0]} ${H[1]}) rotate(${deg(a1)})`}>
+                  <Seg L={Math.hypot(k.e[0] - H[0], k.e[1] - H[1])} w0={W(64)} wm={W(62)} w1={W(52)} fill={skin} line={line} rad={a1} bulge={0.3} />
+                </g>
+              </g>
+            );
+          })()}
+          {(lower === "knee" || lower === "shorts") && D === 0 && (
             <g transform={`translate(${sx * (52 + stance * 20)} -300) rotate(${90 - sx * stance * 6})`}>
               <Seg L={250} w0={W(58)} wm={W(54)} w1={W(34)} fill={skin} line={line} rad={Math.PI / 2} bulge={0.25} />
             </g>
           )}
-          <g transform={`translate(${sx * (58 + stance * 34)} -42) scale(${sx} 1)`}>
+          <g transform={`translate(${fx(sx)} -42) scale(${sx} 1)`}>
             <path d="M-16 -16 Q-20 2 -14 12 L34 14 Q44 12 42 4 Q30 -6 14 -12 Q4 -20 -16 -16Z" fill={skin} stroke={line} strokeWidth={1.6} />
             {[12, 20, 27, 33, 38].map((x, i) => <ellipse key={i} cx={x + 2} cy={11 - i * 0.6} rx={3.6 - i * 0.3} ry={3} fill={skin} stroke={line} strokeWidth={0.9} />)}
             <path d="M-16 -16 Q-20 2 -14 12 L34 14 Q44 12 42 4 Q30 -6 14 -12 Q4 -20 -16 -16Z" fill="url(#rl-cylA)" opacity={0.6} />
@@ -732,6 +806,7 @@ export const Body: React.FC<{ look: Look; o: Outfit; t: number; bulk?: number; b
           </g>
         </g>
       ))}
+      <g transform={`translate(0 ${D})`}>
       {/* tail (vanara) */}
       {o.tail && (
         <path d={`M40 -470 C 160 -420 ${200 + sway * 4} -620 ${170 + sway * 6} -820 C ${150 + sway * 6} -900 ${110} -930 ${92 + sway * 3} -900`} stroke={o.tail} strokeWidth={22} fill="none" strokeLinecap="round" />
@@ -832,9 +907,13 @@ export const Body: React.FC<{ look: Look; o: Outfit; t: number; bulk?: number; b
         </g>
       )}
       </g>
+      </g>
     </g>
   );
 };
+
+/** how far the upper body drops at crouch = 1 (Body / Hero) */
+export const CROUCH_DROP = 150;
 
 /** One full character. Arm targets are relative to the body origin; heads can be replaced (Ravana adds nine more). */
 export type Char = {
@@ -844,12 +923,20 @@ export type Char = {
   lFront?: boolean; rFront?: boolean; sleeve?: string;
   /** keep a held prop at a fixed screen angle (see RArm.propAngle): −90 = shaft straight up */
   rPropAngle?: number; lPropAngle?: number;
+  /** fix the fingers' screen angle (see RArm.handAngle): −90 = pointing straight up */
+  rHandAngle?: number; lHandAngle?: number;
+  /** 0–1: squat with knees out (lower "knee" / "shorts" only) — head, arms and shoulders drop by CROUCH_DROP; hand targets drop with the body */
+  crouch?: number;
+  /** draw only the arms (no body, head or shadow) — layer a held prop between a figure and its own hands */
+  armsOnly?: boolean;
+  /** ground shadow under the feet (turn off for a figure lying down or flying) */
+  shadow?: boolean;
 };
 
 export const Hero: React.FC<Char> = ({
   look, o, t, e, bulk = 1, seed = 0, rHand = [-150, -400], lHand = [150, -400], rPose = HP.hang, lPose = HP.hang, rWrist = 0, lWrist = 0, rProp, lProp,
   headTilt = 0, extraHeads, glow = 0, aura = "#ffd27a", rBend = 0, lBend = 0, stance = 0, lean = 0, rFront = true, lFront = true, sleeve,
-  rPropAngle, lPropAngle,
+  rPropAngle, lPropAngle, rHandAngle, lHandAngle, crouch = 0, armsOnly = false, shadow = true,
 }) => {
   const br = Math.sin(t * 1.6 + seed) * 2.4;
   const rS: P = [SH.r[0] * bulk, SH.r[1] - br * 0.4];
@@ -857,19 +944,21 @@ export const Hero: React.FC<Char> = ({
   // elbows out by default: right arm (viewer left) bends with +1 when the hand is below the shoulder
   const rb = rBend || (rHand[1] > rS[1] ? 1 : -1);
   const lb = lBend || (lHand[1] > lS[1] ? -1 : 1);
-  const armR = <RArm s={rS} h={rHand} bend={rb} skin={look.skin} line={look.line} t={t} pose={rPose} wrist={rWrist} flip={false} prop={rProp} propAngle={rPropAngle} bulk={bulk} sleeve={sleeve} />;
-  const armL = <RArm s={lS} h={lHand} bend={lb} skin={look.skin} line={look.line} t={t} pose={lPose} wrist={lWrist} flip prop={lProp} propAngle={lPropAngle} bulk={bulk} sleeve={sleeve} />;
+  const armR = <RArm s={rS} h={rHand} bend={rb} skin={look.skin} line={look.line} t={t} pose={rPose} wrist={rWrist} handAngle={rHandAngle} flip={false} prop={rProp} propAngle={rPropAngle} bulk={bulk} sleeve={sleeve} />;
+  const armL = <RArm s={lS} h={lHand} bend={lb} skin={look.skin} line={look.line} t={t} pose={lPose} wrist={lWrist} handAngle={lHandAngle} flip prop={lProp} propAngle={lPropAngle} bulk={bulk} sleeve={sleeve} />;
   const up = o.lower === "seated" ? 300 : 0;
+  const D = o.lower === "knee" || o.lower === "shorts" ? crouch * CROUCH_DROP : 0;
+  if (armsOnly) return <g transform={`rotate(${lean} 0 ${up ? -200 : -400})`}><g transform={`translate(0 ${up + D})`}>{armR}{armL}</g></g>;
   return (
     <g transform={`rotate(${lean} 0 ${up ? -200 : -400})`}>
       {glow > 0 && <ellipse cx={0} cy={-520 + up * 0.6} rx={420} ry={620 - up * 0.6} fill={aura} opacity={0.16 * glow} />}
-      <ellipse cx={0} cy={0} rx={up ? 230 : 190} ry={24} fill="#000" opacity={0.32} />
-      <g transform={`translate(0 ${up})`}>
+      {shadow && <ellipse cx={0} cy={0} rx={up ? 230 : 190} ry={24} fill="#000" opacity={0.32} />}
+      <g transform={`translate(0 ${up + D})`}>
         {!rFront && armR}
         {!lFront && armL}
       </g>
-      <Body look={look} o={o} t={t} bulk={bulk} stance={stance} />
-      <g transform={`translate(0 ${up})`}>
+      <Body look={look} o={o} t={t} bulk={bulk} stance={stance} crouch={crouch} />
+      <g transform={`translate(0 ${up + D})`}>
         {extraHeads}
         <g transform={`translate(0 ${-850 - br * 0.3}) rotate(${headTilt})`}>
           <RHead look={look} e={e} t={t} seed={seed} />
@@ -1033,17 +1122,17 @@ export const archer = ({ aim = 0, draw = 1, arrow = true, reach = 300, bow = {},
  */
 export const ARMS = {
   /** arms hanging naturally at the sides (use this as the default standing pose, NOT hands-on-hips) */
-  rest: { rHand: [-138, -400] as P, lHand: [138, -400] as P, rPose: HP.hang, lPose: HP.hang, rBend: -1, lBend: 1 },
+  rest: { rHand: [-150, -420] as P, lHand: [150, -420] as P, rPose: HP.hang, lPose: HP.hang },
   /** fists on the hips — a deliberate proud / defiant pose only */
   akimbo: { rHand: [-150, -470] as P, lHand: [150, -470] as P, rPose: HP.fist, lPose: HP.fist },
   /** right hand raised in blessing (abhaya), left relaxed at the side */
-  bless: { rHand: [-170, -760] as P, rPose: HP.bless, rWrist: -90, lHand: [150, -405] as P, lPose: HP.hang, lBend: 1 },
-  /** both palms joined at the chest — namaste / prayer; use ONLY when the story says so */
-  namaste: { rHand: [-58, -600] as P, lHand: [58, -600] as P, rPose: HP.open, lPose: HP.open, rWrist: -62, lWrist: 62 },
+  bless: { rHand: [-170, -760] as P, rPose: HP.bless, rWrist: -90, lHand: [150, -420] as P, lPose: HP.hang },
+  /** both palms pressed together at the chest, fingers up — namaste / prayer; use ONLY when the story says so */
+  namaste: { rHand: [-10, -585] as P, lHand: [10, -585] as P, rPose: HP.join, lPose: HP.join, rHandAngle: -90, lHandAngle: -90, rBend: 1, lBend: -1 },
   /** holding a long weapon (sword, gada, trishul, spear) upright at the side in the right hand */
-  holdUpright: { rHand: [-190, -450] as P, rPose: HP.grip, rPropAngle: -90, rBend: -1, lHand: [150, -405] as P, lPose: HP.hang, lBend: 1 },
+  holdUpright: { rHand: [-190, -450] as P, rPose: HP.grip, rPropAngle: -90, lHand: [150, -420] as P, lPose: HP.hang },
   /** seated meditation (lower: "seated"): gyan-mudra hands resting on the knees, elbows relaxed */
   meditate: { rHand: [-172, -425] as P, lHand: [172, -425] as P, rPose: HP.gyan, lPose: HP.gyan, rWrist: -20, lWrist: 20 },
   /** bow carried upright in the left hand (not drawn) */
-  bowAtSide: { lHand: [175, -440] as P, lPose: HP.grip, lPropAngle: -90, lBend: 1, lProp: <Bow />, rHand: [-150, -405] as P, rPose: HP.hang, rBend: -1 },
+  bowAtSide: { lHand: [175, -440] as P, lPose: HP.grip, lPropAngle: -90, lProp: <Bow />, rHand: [-150, -420] as P, rPose: HP.hang },
 } satisfies Record<string, Partial<Char>>;

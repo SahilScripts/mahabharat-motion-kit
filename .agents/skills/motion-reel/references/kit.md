@@ -37,7 +37,7 @@ Shake on an impact: add `x: shake(s, t0, 18)` where
 `const shake = (s, t0, amp, len = 0.7) => { const k = s - t0; return k < 0 || k > len ? 0 : Math.sin(k * 73) * amp * (1 - k / len) ** 2; };`
 (both example reels define `shake` and `pulse` at the top — copy them).
 
-## 2. Realistic characters — `kit/real.tsx` + `kit/realcast.tsx`
+## 2. Realistic characters — `kit/real.tsx` + `kit/realcast.tsx` (+ shared sets in `kit/sets.tsx`)
 
 ### Hero (one full character)
 Origin = between the feet; up is −y; about 900 px tall at scale 1 (head top −900, chin −776, shoulders y −716 at x ±116).
@@ -48,7 +48,7 @@ Origin = between the feet; up is −y; about 900 px tall at scale 1 (head top �
 <At x={540} y={1800} s={1.1}>
   <Hero look={LOOK.hanuman} o={OUT.hanuman} t={t}
         rHand={[-180, -520]} rPose={HP.grip} rProp={<Gada />} rPropAngle={-70}
-        lHand={[150, -405]} lPose={HP.hang} lBend={1}
+        lHand={[150, -420]} lPose={HP.hang}
         e={{ smile: 0.4, lookX: 0.3 }} />
 </At>
 ```
@@ -56,7 +56,7 @@ Origin = between the feet; up is −y; about 900 px tall at scale 1 (head top �
 |---|---|
 | `look`, `o` | face/skin/crown (`Look`) and clothes/ornaments (`Outfit`) |
 | `t` | reel time (drives breathing, blinking, cloth) — always pass `t`, not `s` |
-| `rHand`, `lHand` | hand targets `[x, y]`; elbows solve automatically (`rBend`/`lBend` ±1 to flip an elbow) |
+| `rHand`, `lHand` | hand targets `[x, y]`; elbows solve automatically and bend outward. `rBend`/`lBend` ±1 flips an elbow: use it only for a raised or reaching arm that needs it, **never on a hanging arm** (it swings the upper arm across the chest) |
 | `rPose`, `lPose` | hand shape from `HP` (below); blend two with `mixHand(a, b, k)` |
 | `rWrist`, `lWrist` | wrist rotation in degrees (−90 / 90 turns a palm to face the viewer for blessing) |
 | `rProp`, `lProp` | object held in that hand (sword, gada, lotus, bow…) — ALWAYS give it a screen angle with `rPropAngle`/`lPropAngle` |
@@ -85,7 +85,7 @@ A held prop is drawn INSIDE the hand (its grip point sits in the closed fingers)
    `bow: { gold: true, glow: 1 }` for a divine bow (Gandiva, Pinaka), `bow: { wood: "#4a3020" }` for a hunter's bow.
    Faces viewer-right; mirror the whole character with `<At … flip>` to shoot left. Bow carried, not drawn: `{...ARMS.bowAtSide}`.
    A custom bow component of your own must use the same grip frame (grip at 0,0, limbs along ±y, string at −x).
-4. **Arm presets `ARMS`** (spread, then override): `rest` (arms hanging — the default standing pose), `akimbo` (fists on
+4. **Arm presets `ARMS`** (spread, then override; all checked in `KIT-arm-test`): `rest` (arms hanging — the default standing pose), `akimbo` (fists on
    hips — only for a defiant moment), `bless`, `namaste` (only when the story says so), `holdUpright` (weapon upright in
    the right hand, add `rProp`), `bowAtSide`. **Do not leave characters with hands on hips** by default.
    Seated meditation: `ARMS.meditate` (hands on the knees) — never hands flared at the belly.
@@ -95,10 +95,12 @@ A held prop is drawn INSIDE the hand (its grip point sits in the closed fingers)
 5. Two characters struggling over one object (snatching a bow, a tug-of-war): give the object to ONE hand as its prop and
    move the other character's hand target onto the object's position; switch owner at the snatch moment.
 6. After coding, zoom-check every hand that holds something: `pipeline/closeup.sh REEL-<reel> <t> <x> <y>`.
-Look at all of this on the model sheet `KIT-sheet-4` (`pipeline/stills.sh KIT-sheet-4 0 1`).
+Look at all of this on the model sheet `KIT-sheet-4` (`pipeline/stills.sh KIT-sheet-4 0 1`) and in motion with `KIT-arm-test`.
+7. **Do not edit the hand/arm drawing in `kit/real.tsx`** to fix a shot; change the pose in the reel. It was tuned so a hanging
+   hand reads as relaxed (an earlier version drew it as a cupped claw).
 
 ### Hand poses `HP`
-`relax` (soft, hanging) · `hang` (side view, by the thigh) · `fist` · `grip` (closes around a prop) · `open` (palm out, fingers spread) ·
+`hang` (**the resting hand** for an arm hanging at the side: fingers together, nearly straight, hanging down from the wrist, easing in toward the thigh) · `relax` (soft, half-open: for a hand lifted in front, not a hanging one) · `fist` · `grip` (closes around a prop) · `open` (palm out, fingers spread) ·
 `bless` (abhaya mudra — raise the hand, set wrist ±90) · `point` · `claw` (demon threat) · `gyan` (meditation, thumb + index) · `hold` (cupped, carrying) ·
 `draw` (pulling a bowstring; `archer()` sets it for you).
 Use `grip` with every held prop. Never put two hands together in front of the chest unless you mean namaste.

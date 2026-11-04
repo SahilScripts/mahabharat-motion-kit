@@ -54,7 +54,7 @@ export const OUT: Record<string, Outfit> = {
 };
 
 /** Ravana with nine more heads in a row behind the main one (Ravi Varma Press "Angad Shishtai" arrangement). */
-export const Ravana10: React.FC<Omit<Char, "look" | "o"> & { scatter?: number; heads?: number; spread?: number }> = (p) => {
+export const Ravana10: React.FC<Omit<Char, "look" | "o"> & { o?: Outfit; scatter?: number; heads?: number; spread?: number }> = (p) => {
   const { t, e = {}, scatter = 0, heads = 1, spread = 96 } = p;
   const extra: React.ReactNode[] = [];
   for (let i = 4; i >= 1; i--) {
@@ -69,7 +69,7 @@ export const Ravana10: React.FC<Omit<Char, "look" | "o"> & { scatter?: number; h
       );
     }
   }
-  return <Hero {...p} look={LOOK.ravana} o={OUT.ravana} extraHeads={<g>{extra}</g>} />;
+  return <Hero {...p} look={LOOK.ravana} o={p.o ?? OUT.ravana} extraHeads={<g>{extra}</g>} />;
 };
 
 // ---------------------------------------------------------------- model sheet (QA)

@@ -1,4 +1,4 @@
-# Motion Reel Kit — instructions for the agent
+# Mahabharat Motion Kit — instructions for the agent
 
 This repository turns a **voice-over** (Hindi by default) into a finished **vertical motion-graphics reel**
 (1080×1920, 60 fps, MP4) about Indian mythology: Mahabharata, Ramayana, Puranas. Every picture is drawn **in code** (React + SVG,
@@ -19,7 +19,7 @@ The skill `motion-reel` (`.agents/skills/motion-reel/`) has the detailed referen
 ./setup.sh
 ```
 It installs whatever is missing (Node 20+, Python 3.10+, ffmpeg via Homebrew/apt; Remotion and its headless browser;
-a Python venv with faster-whisper; the Whisper model), builds the two example reels' audio and renders a test frame.
+a Python venv with faster-whisper; the Whisper model), builds the three example reels' audio and renders a test frame.
 It is quick when everything is already there. Continue only after it prints **READY**.
 If it stops with a message (e.g. Homebrew missing, Windows), tell the user exactly what to do; never type passwords for them.
 If your commands run in a sandbox without internet (errors like `ENOTFOUND`, `Could not resolve host`, pip/npm/model download
@@ -36,6 +36,13 @@ Run every command from the repository root. Python is `.venv/bin/python`.
    Hands do the right gesture; ornaments on; iconography correct. **Anything held** is passed as `rProp`/`lProp` with
    `rPropAngle`/`lPropAngle` (never drawn as a separate shape near the hand); **bows only via `archer()`**; standing
    characters use `ARMS.rest`, not hands on hips. See "Holding things" in the kit reference.
+   **Hands and arms (this is what made earlier reels look wrong):**
+   - An arm hanging at the side is `HP.hang` with its hand target near `[±150, -420]`. Do **not** pass `rBend`/`lBend` for
+     hanging or resting arms: the default bends the elbows outward like a real body. `rBend={-1}` / `lBend={1}` swings the
+     upper arm in across the chest.
+   - Never change the hand or arm drawing in `remotion/src/kit/real.tsx` to fix a shot. Change the pose in the reel file.
+   - After coding, check hands at full size (`pipeline/closeup.sh`). If you change `real.tsx` for any reason, render
+     `KIT-arm-test` (step 6) and look at every pose.
 4. **Maps of India only from `kit/india.tsx`** (shows all of Jammu & Kashmir, Ladakh, Arunachal Pradesh and the islands).
    Never hand-draw India's outline: incorrect borders are illegal to publish in India.
 5. **Respectful and non-graphic**: deities dignified; violence shown by impact and reaction, never blood.
@@ -85,8 +92,11 @@ A shot under ~1.2 s → merge or re-split shots in the storyboard and run it aga
 2. In it: `const REEL = "<reel>"`; rename `TemplateReel` → `<PascalName>` and `TemplateReelComposition` → `<PascalName>Composition`.
    (Reels are registered automatically; no other file to edit.)
 3. One shot component per storyboard row (`S0 … Sn`) and `const SHOTS = [S0, …, Sn]` — **same count as the storyboard**.
-4. Use the kit — read `.agents/skills/motion-reel/references/kit.md` — and copy patterns/set pieces from
-   `remotion/src/examples/AsurRakshas.tsx` and `Sanjeevani.tsx`.
+4. Use the kit — read `.agents/skills/motion-reel/references/kit.md`. **The style reference is
+   `remotion/src/examples/LankaKuber.tsx`** (finished reel, 19 shots): read it completely before writing your first shot and
+   build yours the same way (same imports, rig() layers, shot structure, reel shell). Reuse its characters and the shared sets
+   in `remotion/src/kit/sets.tsx` (night sky, palace, sea, peaks, Pushpaka, medallions, lineage threads, fire altar, women
+   as `FemBust`). More patterns: `examples/AsurRakshas.tsx` and `Sanjeevani.tsx`.
 5. Every shot: a camera move, ≥ 3 depth layers (far / subject at d=1 / foreground), idle life (fire, particles, glow), and one
    clear action timed to its key word from `cues.txt`. Comment each shot with its line and the cue times you used.
 6. Type-check until clean: `(cd remotion && npx tsc --noEmit -p .)`
@@ -98,7 +108,9 @@ pipeline/stills.sh REEL-<reel> <t1,t2,…>        # seconds; middle of every sho
 Writes `out/stills/REEL-<reel>/f*.jpg` and `sheet.jpg`. **Open and look at every image**, check it against
 `.agents/skills/motion-reel/references/review.md`, fix, re-render the changed stills, look again — until nothing fails.
 Action shots: `pipeline/frames.sh REEL-<reel> <start_seconds> 8 6` → a strip of 8 frames to judge the motion.
-Hands and held objects: `pipeline/closeup.sh REEL-<reel> <t> <x> <y> [w] [h]` → a 2× close-up; check every grip, bow and string.
+Hands and held objects: `pipeline/closeup.sh REEL-<reel> <t> <x> <y> [w] [h]` → a 2× close-up; check every grip, bow and string,
+and every hanging hand (relaxed, fingers together, hanging straight down — never a cupped claw).
+Arm check: `(cd remotion && npx remotion render KIT-arm-test ../out/arm-test.mp4)` → 12 s of every arm preset in motion.
 
 ### 7. Sound effects
 Write `reels/<reel>/sfx.py` (`.agents/skills/motion-reel/references/sound.md`; examples in `reels/example-*/sfx.py`), then

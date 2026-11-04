@@ -8,7 +8,7 @@ description: Make a vertical motion-graphics reel (1080x1920, 60 fps) from a voi
 You turn a voice-over into a finished reel with the tools in this repository. Everything runs locally: no cloud APIs,
 no image or video generators, no API keys.
 
-Follow `GEMINI.md` (repository root) step by step: it holds the rules and the exact commands. The details live here:
+Follow `AGENTS.md` (repository root; `GEMINI.md`, `CLAUDE.md` and `.github/copilot-instructions.md` are the same text) step by step: it holds the rules and the exact commands. The details live here:
 
 | file | read it when |
 |---|---|
@@ -18,6 +18,7 @@ Follow `GEMINI.md` (repository root) step by step: it holds the rules and the ex
 | `references/sound.md` | writing `sfx.py` (step 7) and adjusting the music level |
 
 Worked examples (read before coding your first reel):
+- `reels/example-lanka-kuber/` + `remotion/src/examples/LankaKuber.tsx` — 19 shots, **the style reference**: palace, lineage board with medallions, sea and island city, Brahma on a lotus, the Pushpaka in flight, a duel, a seated tapasya.
 - `reels/example-asur-rakshas/` + `remotion/src/examples/AsurRakshas.tsx` — 18 shots: lineage board, medallions, war in heaven, fire ritual, shape-shifting.
 - `reels/example-sanjeevani/` + `remotion/src/examples/Sanjeevani.tsx` — 13 shots: flight across the India map, mountain lift, size comparison, battlefield.
 

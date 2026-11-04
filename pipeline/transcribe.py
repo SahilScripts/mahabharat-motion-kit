@@ -5,7 +5,7 @@
 Reads  reels/<reel>/voiceover.(mp3|wav|m4a|aac|ogg)
 Writes reels/<reel>/whisper.json      timed words [{word, start, end}]   (used by timing.py to place every script word)
        reels/<reel>/transcript.txt    what Whisper heard, as plain text  (a DRAFT — Whisper misspells Hindi; the agent
-                                       writes the clean script-hi.txt from it, see GEMINI.md step 2)
+                                       writes the clean script-hi.txt from it, see AGENTS.md step 2)
 """
 
 import json

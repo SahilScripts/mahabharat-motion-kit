@@ -81,7 +81,7 @@ mkdir -p remotion/public/mg/template out
 [ -f remotion/public/mg/template/mix.wav ] || ffmpeg -v error -y -f lavfi -i anullsrc=r=48000:cl=stereo -t 8 remotion/public/mg/template/mix.wav
 cp -n remotion/public/mg/template/mix.wav remotion/public/mg/template/sfx.wav 2>/dev/null || true
 [ -f remotion/public/mg/template/manifest.json ] || echo '{"duration": 8, "audio": "mg/template/mix.wav", "scenes": [{"start": 0, "end": 4}, {"start": 4, "end": 8}], "words": []}' > remotion/public/mg/template/manifest.json
-for r in example-asur-rakshas example-sanjeevani; do
+for r in example-asur-rakshas example-sanjeevani example-lanka-kuber; do
   [ -f "remotion/public/mg/$r/sfx.wav" ] || { .venv/bin/python pipeline/timing.py "$r" >/dev/null && .venv/bin/python pipeline/sfx.py "$r"; }
 done
 say "type-checking the drawing code"

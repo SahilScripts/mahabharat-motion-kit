@@ -15,6 +15,8 @@
  *    Held objects: rProp/lProp + rPropAngle/lPropAngle; bows: {...archer({ aim, draw })}; standing arms: {...ARMS.rest}.
  *    Put <RealDefs /> once inside every layer that holds a real-cast character.
  *  - Shot-local word cues: open public/mg/<REEL>/manifest.json, find the word, subtract the shot's start.
+ *  - STYLE REFERENCE: src/examples/LankaKuber.tsx — build every reel the same way. Shared sets: ../kit/sets.
+ *  - Arms hanging at the side: HP.hang, hands near [±150, -420], and NO rBend/lBend (the default bends elbows outward).
  */
 import React from "react";
 import { AbsoluteFill, Audio, Composition, Easing, staticFile, useCurrentFrame, type CalculateMetadataFunction } from "remotion";

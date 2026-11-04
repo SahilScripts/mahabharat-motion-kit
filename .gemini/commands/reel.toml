@@ -2,7 +2,7 @@ description = "Make a motion-graphics reel from a voice-over: /reel <path-to-voi
 prompt = """
 Make a finished motion-graphics reel from this voice-over: {{args}}
 
-Follow GEMINI.md from Step 0 (run ./setup.sh until it prints READY) through Step 10, without stopping for approval.
-Use the motion-reel skill references (.agents/skills/motion-reel/references/) at the steps GEMINI.md names.
+Follow AGENTS.md (same as GEMINI.md) from Step 0 (run ./setup.sh until it prints READY) through Step 10, without stopping for approval.
+Use the motion-reel skill references (.agents/skills/motion-reel/references/) at the steps AGENTS.md names.
 If no reel name was given, choose a short lowercase name with hyphens from the story.
 """

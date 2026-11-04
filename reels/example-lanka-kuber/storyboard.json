@@ -1,0 +1,25 @@
+{
+ "title": "सोने की लंका रावण की थी ही नहीं",
+ "style": "Painted-realism vector characters (remotion/src/kit/real.tsx) in lit 2.5D scenes; one camera through flat layers. Relaxed hanging hands (HP.hang), elbows at their default. NO subtitles, no text, no labels.",
+ "shots": [
+  {"s": 0, "title": "Golden Lanka", "pick": "Firelit night; golden Lanka glows; ten-headed Ravana stands proud before it. On 'नहीं' a gold crack splits the frame and the gold drains from behind him.", "camera": "push in", "sound": "drum hit, crack"},
+  {"s": 1, "title": "Kubera", "pick": "Golden palace; Kubera, lord of wealth, holds a treasure pot; coins rain and glint.", "camera": "tilt up", "sound": "chimes, coins"},
+  {"s": 1, "title": "Brothers", "pick": "Split frame: Kubera (gold) and Ravana (red) side by side; they turn to look at each other.", "camera": "pull back", "sound": "gong"},
+  {"s": 2, "title": "Father Vishrava", "pick": "Lineage board: the rishi Vishrava's medallion; gold threads run down to Kubera and Ravana.", "camera": "tilt down", "sound": "thread whoosh"},
+  {"s": 3, "title": "Two mothers", "pick": "Devavarnini joins Kubera with a gold thread; pan right: Kaikesi of the rakshasa clan joins Ravana with a red thread; Ravana's side turns red.", "camera": "pan right", "sound": "whoosh, low hit"},
+  {"s": 4, "title": "Vishwakarma", "pick": "Night sea; Vishwakarma raises his hammer and golden towers of Lanka rise out of the island, sparks flying.", "camera": "push in", "sound": "hammer clinks, rise"},
+  {"s": 5, "title": "Rakshasas flee", "pick": "Vishnu's Sudarshan chakra blazes in the sky; rakshasas flee and sink into the dark below; Lanka's lights go out, the city stands empty under the moon.", "camera": "pan down", "sound": "chakra whirr, rumble"},
+  {"s": 6, "title": "Kubera settles Lanka", "pick": "Rishi Vishrava blesses; Kubera walks toward Lanka and the city lights up window by window.", "camera": "push in", "sound": "bells, chime rise"},
+  {"s": 7, "title": "Brahma's gift", "pick": "Brahma on a lotus in the clouds blesses Kubera; gold coins pour; the Pushpaka descends in a glow.", "camera": "tilt up then down", "sound": "choir pad, whoosh"},
+  {"s": 8, "title": "Visit to father", "pick": "Kubera rides the Pushpaka over the sea to his father's ashram.", "camera": "track", "sound": "wind, bells"},
+  {"s": 9, "title": "Kaikesi's words", "pick": "Night; Kaikesi points up at the glowing Pushpaka passing above and speaks to Ravana.", "camera": "push in", "sound": "whisper sting"},
+  {"s": 10, "title": "Tapasya", "pick": "Ravana sits in fierce tapasya among fires; flames rise higher.", "camera": "slow push", "sound": "fire roar"},
+  {"s": 11, "title": "The message", "pick": "Ravana, glowing with the boon, points toward Lanka and sends a burning message.", "camera": "whip pan", "sound": "impact, whoosh"},
+  {"s": 12, "title": "Father's advice", "pick": "Vishrava counsels Kubera: don't fight Ravana. Kubera bows his head.", "camera": "static", "sound": "soft drone"},
+  {"s": 13, "title": "To Kailash", "pick": "Kubera leaves Lanka in the Pushpaka toward the snowy peaks of Kailash.", "camera": "track", "sound": "wind"},
+  {"s": 14, "title": "Ravana doesn't stop", "pick": "Ravana roars, sword raised, fire behind him.", "camera": "shake", "sound": "roar, drums"},
+  {"s": 15, "title": "Attack on Alaka", "pick": "Ravana's sword clashes with Kubera's mace; Kubera falls; Ravana stands on the Pushpaka.", "camera": "shake, pull back", "sound": "clash, thud"},
+  {"s": 16, "title": "Rama returns it", "pick": "Rama and Sita fly to Ayodhya in the Pushpaka; then the Pushpaka glides back to Kubera.", "camera": "track", "sound": "bells, chime"},
+  {"s": 17, "title": "Taken", "pick": "Golden Lanka and the Pushpaka: both were taken. Ravana's empty throne in Lanka as the Pushpaka glides away.", "camera": "pull back", "sound": "final hit"}
+ ]
+}
