@@ -69,6 +69,7 @@ cd remotion && npx remotion render KIT-arm-test ../out/arm-test.mp4
 | `AGENTS.md` | the agent's instructions: the rules and the 10-step workflow. `CLAUDE.md`, `GEMINI.md` and `.github/copilot-instructions.md` are the same text, for each agent |
 | `.agents/skills/motion-reel/` | the detailed guides: storyboard craft, drawing-kit reference, review checklist, sound |
 | `.gemini/commands/`, `.agents/workflows/` | `/reel` and `/setup` shortcuts for Gemini CLI and Antigravity |
+| `SKILL.md`, `.gemini/skills/mahabharat-motion-kit/` | the kit as an Agent Skill, for agents that ask for a `SKILL.md` (Gemini CLI, Antigravity). `dist/mahabharat-motion-kit-skill.zip` is the same skill as one zip, if your agent asks you to upload a skill file |
 | `setup.sh` | installs everything and self-tests; safe to re-run |
 | `pipeline/` | `transcribe.py` (local Whisper) · `timing.py` (cuts, music, mix) · `sfx.py` + `sfxlib.py` (synthesised effects) · `stills.sh`, `frames.sh`, `closeup.sh` (review) · `render.sh` · `cta.sh` (optional end card) |
 | `remotion/src/kit/` | the drawing kit: realistic characters (`real.tsx`, `realcast.tsx`), shared sets and props (`sets.tsx`), camera and scenery (`scene.tsx`), India map (`india.tsx`), older flat cast and props (`cast*.tsx`), arm test, end card |
