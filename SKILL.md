@@ -57,6 +57,6 @@ Worked examples: `reels/example-lanka-kuber/` + `remotion/src/examples/LankaKube
 `reels/example-sanjeevani/` + `remotion/src/examples/Sanjeevani.tsx` (13 shots).
 
 To see the target look before you start, watch `docs/examples/*.mp4`: five finished reels made with this kit (360p
-copies; the full 1080x1920 versions are on the repository's Releases page).
+copies of the 1080x1920 originals).
 
 The deliverable is `out/<reel>.mp4` (or `out/<reel>-final.mp4` with the end card).
