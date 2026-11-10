@@ -23,3 +23,6 @@ remotion/src/reels/*
 *.pem
 *-key.json
 key.json
+
+# finished reels: kept out of the kit so it stays under 100 MB (small copies in docs/examples/)
+final/

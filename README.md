@@ -33,6 +33,13 @@ plans the shots, codes the animation, checks the frames and renders the video, f
    The agent works through: transcribe → exact script → storyboard → timing → animation code → still-frame review → sound
    effects → render. The video lands in `out/<name>.mp4`.
 
+### Using it in the Gemini app
+
+Download [`dist/mahabharat-motion-kit.zip`](dist/mahabharat-motion-kit.zip) (about 13 MB, well under Gemini's 100 MB limit)
+and upload it as the skill in a Gemini task, together with your voice-over. Upload the zip, not the instructions alone: the
+look comes from the kit's code (the characters and their hands, the sets, the India map, the sound and the render
+pipeline), and an agent that only has the instructions has to draw everything from scratch.
+
 Voice-over tips: clear narration, 45–90 s, one speaker. Hindi is the default; set `"language"` in `kit.config.json`
 (for example `"en"`) for another language.
 
@@ -69,7 +76,9 @@ cd remotion && npx remotion render KIT-arm-test ../out/arm-test.mp4
 | `AGENTS.md` | the agent's instructions: the rules and the 10-step workflow. `CLAUDE.md`, `GEMINI.md` and `.github/copilot-instructions.md` are the same text, for each agent |
 | `.agents/skills/motion-reel/` | the detailed guides: storyboard craft, drawing-kit reference, review checklist, sound |
 | `.gemini/commands/`, `.agents/workflows/` | `/reel` and `/setup` shortcuts for Gemini CLI and Antigravity |
-| `SKILL.md`, `.gemini/skills/mahabharat-motion-kit/` | the kit as an Agent Skill, for agents that ask for a `SKILL.md` (Gemini CLI, Antigravity). `dist/mahabharat-motion-kit-skill.zip` is the same skill as one zip, if your agent asks you to upload a skill file |
+| `SKILL.md`, `.gemini/skills/mahabharat-motion-kit/` | the kit as an Agent Skill, for agents that ask for a `SKILL.md` (Gemini CLI, Antigravity) |
+| `dist/mahabharat-motion-kit.zip` | the whole kit as one zip (about 13 MB) with `SKILL.md` on top, for agents that take an uploaded skill file, like a Gemini task. Rebuild it with `pipeline/pack.sh` |
+| `docs/examples/` | five finished reels made with the kit (360p copies) |
 | `setup.sh` | installs everything and self-tests; safe to re-run |
 | `pipeline/` | `transcribe.py` (local Whisper) · `timing.py` (cuts, music, mix) · `sfx.py` + `sfxlib.py` (synthesised effects) · `stills.sh`, `frames.sh`, `closeup.sh` (review) · `render.sh` · `cta.sh` (optional end card) |
 | `remotion/src/kit/` | the drawing kit: realistic characters (`real.tsx`, `realcast.tsx`), shared sets and props (`sets.tsx`), camera and scenery (`scene.tsx`), India map (`india.tsx`), older flat cast and props (`cast*.tsx`), arm test, end card |

@@ -8,6 +8,9 @@ description: Make a vertical motion-graphics reel (1080x1920, 60 fps MP4) about 
 You turn a voice-over into a finished reel with the tools in this repository. Everything runs locally: Node (Remotion),
 Python (numpy + faster-whisper) and ffmpeg. No cloud APIs, no image or video generators, no API keys, no logins.
 
+If you got this kit as an uploaded zip (for example in a Gemini task), unzip it and work from its top folder: it is the
+whole repository (code, examples, guides), not just these instructions.
+
 ## What to do
 
 Follow `AGENTS.md` in the repository root step by step, from Step 0 (`./setup.sh` until it prints **READY**) to Step 10.
@@ -52,5 +55,8 @@ The short version:
 Worked examples: `reels/example-lanka-kuber/` + `remotion/src/examples/LankaKuber.tsx` (the style reference, 19 shots),
 `reels/example-asur-rakshas/` + `remotion/src/examples/AsurRakshas.tsx` (18 shots),
 `reels/example-sanjeevani/` + `remotion/src/examples/Sanjeevani.tsx` (13 shots).
+
+To see the target look before you start, watch `docs/examples/*.mp4`: five finished reels made with this kit (360p
+copies; the full 1080x1920 versions are on the repository's Releases page).
 
 The deliverable is `out/<reel>.mp4` (or `out/<reel>-final.mp4` with the end card).
